@@ -72,7 +72,7 @@ Example of `mlp01scale`
 
 1. Architecture in `mlp01example/core/ensemble_model`
 
-
+```python
     class mlp01scaleln(nn.Module):
         def __init__(self, num_classes=2, act=sign, sigmoid=False, softmax=False, scale=1, votes=1, bias=True):
             super(mlp01scaleln, self).__init__()
@@ -114,11 +114,13 @@ Example of `mlp01scale`
                 out = out.mean(dim=1).argmax(dim=-1)
     
             return out
+```
+
 
 
 2. Architecture in `mlp01example/attack_demo/core/ensemble_model.py`
 
-
+```python
     class mlp01scale(nn.Module):
         def __init__(self, num_classes=2, act=sign, sigmoid=False, softmax=False, scale=1, votes=1, bias=True):
             super(mlp01scale, self).__init__()
@@ -159,3 +161,4 @@ Example of `mlp01scale`
                 out = out.mean(dim=1)  # <-- modify here
     
             return out
+```

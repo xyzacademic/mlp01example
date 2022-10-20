@@ -13,15 +13,19 @@
 ## Prepare
 
 1. Install pytorch
+```shell
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+```
 
-
-    conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+   
 
 
 2. Install advertorch
 
-
-    pip install git+https://github.com/BorealisAI/advertorch.git
+```shell
+pip install git+https://github.com/BorealisAI/advertorch.git
+```
+    
 
 3. You may also need `sklearn` and `pandas` as well.
 

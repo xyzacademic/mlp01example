@@ -16,7 +16,7 @@ Make sure the gpu device is available.
 
 Parameters:
 
- - --epsilon  Linf distance of each pixel(max `255`). Suggest `16`
+   - --epsilon  Linf distance of each pixel(max `255`). Suggest `16`
    - --num-steps  PGD-attack parameters
    - --attack_type `PGD` or `FGSM`
    - --dataset  Dataset. `cifar10_binary`
@@ -27,8 +27,10 @@ Parameters:
 Example:
 
 Run
-
-    python mlp_attack_out.py --epsilon 16 --num-steps 20 --attack_type pgd --dataset cifar10_binary --c0 0 --c1 1 --name results/outer/cifar10_binary/mlp_pgd_16_20_01
+```shell
+python mlp_attack_out.py --epsilon 16 --num-steps 20 --attack_type pgd --dataset cifar10_binary --c0 0 --c1 1 --name results/outer/cifar10_binary/mlp_pgd_16_20_01
+```
+    
 
 
 Then you will get results in terminal and a `mlp_pgd_16_20_01.csv` file at location of `results/outer/cifar10_binary/`
