@@ -37,7 +37,8 @@
 - `--c1` the second class is class1
 
 ### Run for 8 votes
-1. run the code above in single run for 8 continuous different random seeds, suggest 0~7.
+1. run the code above in single run for 8 continuous different random seeds(suggest 0~7)
+such as in [run_example_for_8_votes_training.sh](run_example_for_8_votes_training.sh)
     You will get 8 checkpoints in directory `checkpoints/pt/`
 
 
