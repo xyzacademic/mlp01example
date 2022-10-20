@@ -33,5 +33,5 @@ pip install git+https://github.com/BorealisAI/advertorch.git
 
 ## Guide
 
-1. Training neural network is in `main`.
+1. Training neural network in `main`.
 2. Run for `PGD/FGSM` attack in `attack_demo`.
