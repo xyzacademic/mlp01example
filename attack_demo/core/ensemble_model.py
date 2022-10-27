@@ -38,6 +38,104 @@ class MySign(torch.autograd.Function):
 
 msign = MySign.apply
 
+class ModelWrapper(object):
+    def __init__(self, net):
+        self.net = net
+
+    def predict(self, x, batch_size=2000):
+        with torch.no_grad():
+            if type(x) is not torch.Tensor:
+                self.net.float()
+                x = torch.from_numpy(x).type_as(self.net._modules[list(self.net._modules.keys())[0]].weight)
+            if torch.cuda.is_available():
+                self.net.cuda()
+                x = x.cuda()
+
+            if batch_size:
+                n_batch = x.shape[0] // batch_size
+                n_rest = x.shape[0] % batch_size
+                yp = []
+                for i in range(n_batch):
+                    yp.append(
+                        self.net(x[batch_size * i: batch_size * (i + 1)]))
+                if n_rest > 0:
+                    yp.append(self.net(x[batch_size * n_batch:]))
+                yp = torch.cat(yp, dim=0)
+            else:
+                yp = self.net(x)
+
+        return yp.cpu().numpy()
+
+
+    def predict_proba(self, x, batch_size=None, votes=None):
+        pass
+
+    def inference(self, x, prob=False, all=False, votes=None):
+        pass
+
+
+class ModelWrapper2(object):
+    def __init__(self, structure, votes, path,):
+        self.net = {}
+        self.votes = votes
+        for i in range(votes):
+            self.net[i] = structure()
+            self.net[i].load_state_dict(torch.load(path[i],
+                            map_location=torch.device('cpu')))
+
+    def predict(self, x, batch_size=2000):
+
+        if batch_size:
+            n_batch = x.shape[0] // batch_size
+            n_rest = x.shape[0] % batch_size
+            yp = []
+            for i in range(n_batch):
+                # print(i)
+                yp.append(
+                    self.inference(x[batch_size * i: batch_size * (i + 1)]))
+            if n_rest > 0:
+                yp.append(self.inference(x[batch_size * n_batch:]))
+            yp = torch.cat(yp, dim=0)
+
+        else:
+            # yp = self.net(x)
+            yp = self.inference(x)
+
+        return yp.cpu().numpy()
+
+
+    def predict_proba(self, x, batch_size=None, votes=None):
+        if type(x) is not torch.Tensor:
+            x = torch.from_numpy(x).type_as(
+                self.net[0]._modules[list(self.net[0]._modules.keys())[0]].weight)
+        if torch.cuda.is_available():
+            for i in range(self.votes):
+                self.net[i].cuda()
+            x = x.cuda()
+
+        yp = []
+        for i in range(self.votes):
+            yp.append(self.net[i](x))
+        yp = torch.stack(yp, dim=1)
+
+        return yp.mean(dim=1).cpu()
+
+    def inference(self, x, prob=False, all=False, votes=None):
+        if type(x) is not torch.Tensor:
+            x = torch.from_numpy(x).type_as(
+                self.net[0]._modules[list(self.net[0]._modules.keys())[0]].weight)
+        if torch.cuda.is_available():
+            for i in range(self.votes):
+                self.net[i].cuda()
+            x = x.cuda()
+
+        yp = []
+        for i in range(self.votes):
+            yp.append(self.net[i](x))
+        yp = torch.stack(yp, dim=1)
+
+        return yp.mean(dim=1).argmax(dim=-1).cpu()
+
 
 class mlp01scale(nn.Module):
     def __init__(self, num_classes=2, act=sign, sigmoid=False, softmax=False, scale=1, votes=1, bias=True):
